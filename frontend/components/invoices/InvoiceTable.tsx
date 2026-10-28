@@ -1,0 +1,5 @@
+import { Check } from "lucide-react";
+import { money } from "../../lib/api";
+import type { Invoice } from "../../lib/types";
+import { Status } from "../ui";
+export function InvoiceTable({invoices,onPayment}:{invoices:Invoice[];onPayment:(i:Invoice)=>void}){return <div className="table-wrap"><table><thead><tr><th>Invoice</th><th>Customer</th><th>Due date</th><th>Amount</th><th>Outstanding</th><th>Status</th><th>Action</th></tr></thead><tbody>{invoices.map(i=><tr key={i.id}><td><strong>{i.invoice_number}</strong><div style={{fontSize:10,color:"#8994a5",marginTop:4}}>{i.description}</div></td><td>{i.customer_name}</td><td>{i.due_date}</td><td className="amount">{money(i.amount_minor,i.currency)}</td><td className="amount">{money(i.outstanding_minor,i.currency)}</td><td><Status value={i.status}/></td><td>{i.outstanding_minor>0?<button className="button secondary" style={{padding:"7px 9px",fontSize:10}} onClick={()=>onPayment(i)}>Record payment</button>:<span style={{color:"#9aa4b3"}}>—</span>}</td></tr>)}</tbody></table>{!invoices.length&&<div className="empty">No invoices found.</div>}</div>}

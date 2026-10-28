@@ -1,0 +1,3 @@
+reference,description,amount_minor,date
+BANK-IMPORT-1001,Incoming customer transfer,6500000,2026-10-21
+BANK-IMPORT-1002,Unknown transfer,1250000,2026-10-22
