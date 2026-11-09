@@ -1,4 +1,6 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+).replace(/\/$/, "");
 
 export function getToken() {
   if (typeof window === "undefined") return "";
@@ -13,10 +15,13 @@ export function clearToken() {
   localStorage.removeItem("cashorbit_token");
 }
 
-export async function api<T = any>(path: string, options: RequestInit = {}): Promise<T> {
+export async function api<T = any>(
+  path: string,
+  options: RequestInit = {},
+): Promise<T> {
   const token = getToken();
   const headers: Record<string, string> = {
-    ...(options.headers as Record<string, string> || {}),
+    ...((options.headers as Record<string, string>) || {}),
   };
 
   if (token) headers.Authorization = `Bearer ${token}`;
@@ -33,7 +38,7 @@ export async function api<T = any>(path: string, options: RequestInit = {}): Pro
     });
   } catch {
     throw new Error(
-      "Unable to reach the API. Check that the backend is running and NEXT_PUBLIC_API_URL is correct."
+      "Unable to reach the API. Check that the backend is running and NEXT_PUBLIC_API_URL is correct.",
     );
   }
 
