@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+import warnings
 
 class Settings(BaseSettings):
     database_url: str = "sqlite:///./cashorbit.db"
@@ -17,7 +18,22 @@ class Settings(BaseSettings):
     sslcommerz_store_id: str = ""
     sslcommerz_store_password: str = ""
     openai_api_key: str = ""
-    openai_model: str = "gpt-4o-mini"
+    openai_base_url: str = "https://api.groq.com/openai/v1"
+    openai_model: str = "openai/gpt-oss-20b"
+    # gemini_api_key: str = ""
+    # gemini_base_url: str = "https://generativelanguage.googleapis.com/v1beta/openai"
+    # gemini_model: str = "gemini-2.5-flash-lite"
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
+    def validate_for_deploy(self) -> None:
+        """Warn loudly if insecure defaults are still in use."""
+        if self.jwt_secret in ("local-only-change-me", "change-me", ""):
+            warnings.warn(
+                "JWT_SECRET is using an insecure default. "
+                "Set a long random value before any public deployment.",
+                UserWarning,
+                stacklevel=2,
+            )
+
 settings = Settings()
+settings.validate_for_deploy()

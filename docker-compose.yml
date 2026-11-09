@@ -2,9 +2,9 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-cashorbit}
+      POSTGRES_USER: ${POSTGRES_USER:-cashorbit}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-this-local-password}
     ports:
       - "5432:5432"
     volumes:
@@ -18,28 +18,32 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-
   api:
     build: ./backend
     environment:
-      # Dynamically build the URL using the variables instead of hardcoding a password
-      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      JWT_SECRET: ${JWT_SECRET:-placeholder_secret}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://cashorbit:change-this-local-password@db:5432/cashorbit}
+      JWT_SECRET: ${JWT_SECRET:-local-only-change-me}
       JWT_EXPIRE_MINUTES: ${JWT_EXPIRE_MINUTES:-720}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
       PAYMENT_PUBLIC_BASE_URL: ${PAYMENT_PUBLIC_BASE_URL:-http://localhost:8000}
       FRONTEND_PUBLIC_URL: ${FRONTEND_PUBLIC_URL:-http://localhost:3000}
       PAYMENT_PROVIDER_MODE: ${PAYMENT_PROVIDER_MODE:-sandbox}
       BKASH_BASE_URL: ${BKASH_BASE_URL:-https://tokenized.sandbox.bka.sh/v1.2.0-beta}
-      BKASH_APP_KEY: ${BKASH_APP_KEY}
-      BKASH_APP_SECRET: ${BKASH_APP_SECRET}
-      BKASH_USERNAME: ${BKASH_USERNAME}
-      BKASH_PASSWORD: ${BKASH_PASSWORD}
+      BKASH_APP_KEY: ${BKASH_APP_KEY:-}
+      BKASH_APP_SECRET: ${BKASH_APP_SECRET:-}
+      BKASH_USERNAME: ${BKASH_USERNAME:-}
+      BKASH_PASSWORD: ${BKASH_PASSWORD:-}
       SSLCOMMERZ_BASE_URL: ${SSLCOMMERZ_BASE_URL:-https://sandbox.sslcommerz.com}
-      SSLCOMMERZ_STORE_ID: ${SSLCOMMERZ_STORE_ID}
-      SSLCOMMERZ_STORE_PASSWORD: ${SSLCOMMERZ_STORE_PASSWORD}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      SSLCOMMERZ_STORE_ID: ${SSLCOMMERZ_STORE_ID:-}
+      SSLCOMMERZ_STORE_PASSWORD: ${SSLCOMMERZ_STORE_PASSWORD:-}
+
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-openai/gpt-oss-20b}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.groq.com/openai/v1}
+
+      # GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      # GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.0-flash}
+      # GEMINI_BASE_URL: ${GEMINI_BASE_URL:-https://generativelanguage.googleapis.com/v1beta/openai}
     ports:
       - "8000:8000"
     depends_on:

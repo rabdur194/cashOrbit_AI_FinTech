@@ -120,6 +120,7 @@ async def chat(
         raise HTTPException(status_code=422, detail="At least one user message is required")
 
     if not settings.openai_api_key:
+
         return {"answer": _fallback_answer(latest_user, context), "mode": "demo_fallback", "sources": sources}
 
     system_prompt = (
@@ -135,16 +136,28 @@ async def chat(
     conversation.extend({"role": item.role, "content": item.content} for item in payload.messages[-8:])
     try:
         async with httpx.AsyncClient(timeout=35.0) as client:
+            # endpoint_url = f"{settings.gemini_base_url.rstrip('/')}/chat/completions"
+            endpoint_url = f"{settings.openai_base_url.rstrip('/')}/chat/completions"
             response = await client.post(
-                "https://api.openai.com/v1/chat/completions",
-                headers={"Authorization": f"Bearer {settings.openai_api_key}"},
+                endpoint_url,
+                headers={
+                    # "Authorization": f"Bearer {settings.gemini_api_key}",
+                    "Authorization": f"Bearer {settings.openai_api_key}",
+                    "Content-Type": "application/json",
+                },
                 json={"model": settings.openai_model, "messages": conversation, "temperature": 0.2},
             )
+        
+        # Print raw response text to terminal if Gemini returns an error
+        if response.is_error:
+            print("=== GEMINI API ERROR RESPONSE ===", response.status_code, response.text)
+            
         response.raise_for_status()
         answer = response.json()["choices"][0]["message"]["content"]
         if not isinstance(answer, str) or not answer.strip():
             raise ValueError("The model returned an empty answer")
         return {"answer": answer.strip(), "mode": "llm", "sources": sources}
-    except (httpx.HTTPError, ValueError, KeyError, IndexError) as exc:
-        # Avoid exposing provider response bodies or secrets to the browser.
-        raise HTTPException(status_code=502, detail="The AI provider request failed. Check the API key, model setting, and API service logs.") from exc
+        
+    except Exception as exc:
+        print("=== FULL EXCEPTION CAUGHT ===", repr(exc))
+        raise HTTPException(status_code=502, detail=f"AI Provider Error: {str(exc)}") from exc

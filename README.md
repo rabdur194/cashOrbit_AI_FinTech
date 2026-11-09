@@ -1,165 +1,191 @@
-# CashOrbit — B2B Receivables & Working-Capital SaaS
+# CashOrbit
 
-CashOrbit is a portfolio-grade full-stack fintech learning project for business invoicing, payment tracking, bank-statement reconciliation, collections workflows, working-capital indicators, explainable anomaly review, buyer access, payment-provider sandbox checkout, and financing simulation.
+**B2B Receivables & Working-Capital Platform**  
+Full-stack fintech portfolio project — invoice-to-cash, reconciliation, collections, and AI-assisted finance operations.
 
-**Stack:** Next.js 15 + React + TypeScript · FastAPI · SQLAlchemy · PostgreSQL 16 · Docker Compose · Alembic scaffolding.
+![Stack](https://img.shields.io/badge/Next.js-15-black) ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791) ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6)
 
-> **Scope and safety:** This is an educational portfolio application, not production financial software. bKash and SSLCOMMERZ support is intended for sandbox testing. Do not use live credentials or real customer data. Production use requires provider approval, security and accounting reviews, regulatory/legal review, robust tests, monitoring, operational controls, and verified end-to-end behavior.
+> **Portfolio project** — Built to demonstrate real fintech engineering patterns (double-entry ledger, bank reconciliation, multi-tenant data model, payment sandbox flows, and an AI finance assistant).  
+> Not production financial software. Do not process real money or real customer data.
 
-## Start here
+---
 
-1. Install Docker Desktop or Docker Engine with Compose.
-2. Extract this project and open the `CashOrbit-Complete` folder in VS Code.
-3. Copy `.env.example` to `.env`.
-4. Set a unique local `POSTGRES_PASSWORD` and long random `JWT_SECRET`. Keep `.env` private.
-5. From the project root, run:
+## Why this project exists
 
-   ```bash
-   docker compose up --build
-   ```
+Many B2B businesses struggle with the same problems:
 
-6. Open the app and API docs:
-   - Web app: <http://localhost:3000>
-   - API docs: <http://localhost:8000/docs>
-   - Health check: <http://localhost:8000/health>
+- Cash trapped in unpaid invoices (high DSO)
+- Manual bank reconciliation
+- Weak visibility into overdue receivables
+- No clear audit trail of finance actions
 
-**Demo account** (local learning only): `demo@cashorbit.local` / `CashOrbitDemo123!`
+CashOrbit implements the core **invoice → payment → ledger → reconciliation → collections** loop that real accounts-receivable platforms solve, with Bangladesh-relevant payment rails (bKash + SSLCOMMERZ sandbox) and an AI assistant on top.
 
-If startup fails, see [Troubleshooting](docs/TROUBLESHOOTING.md). This project has not been verified as a complete end-to-end deployment in every environment; follow [Testing and verification](docs/TESTING.md) before presenting it as fully tested.
+---
 
-## Feature overview
+## Live Demo (local)
 
-### Finance operations
-- Dashboard summaries for invoiced, collected, outstanding, overdue, and reconciliation progress.
-- Customer creation and directory.
-- Invoice creation, due dates, invoice status, outstanding balances, duplicate invoice-number checks, and partial/full manual demo payment recording.
-- Basic double-entry ledger for supported invoice and payment events; entries are expected to balance.
-- Audit history for selected business operations.
+| Service        | URL                          |
+|----------------|------------------------------|
+| Web App        | http://localhost:3000        |
+| API Docs       | http://localhost:8000/docs   |
+| Health Check   | http://localhost:8000/health |
 
-### Reconciliation and collections
-- Import bank-statement CSV files with the required headers `reference,description,amount_minor,date`.
-- Skip duplicate external references, suggest conservative amount-based matches, and explicitly confirm matches.
-- Export receivables as CSV.
-- Prioritized unpaid/overdue invoice queue, generated reminder records, and reminder history. Reminder records are an outbox simulation; no email is sent by default.
+**Demo login**  
+Email: `demo@cashorbit.local`  
+Password: `CashOrbitDemo123!`
 
-### Intelligence and AI assistant
-- Receivables aging, cumulative 30/60/90-day due-date inflow baseline, and a simplified DSO proxy.
-- AI Finance Operations Assistant with organization-scoped invoice context, read-only answers, invoice references, and a clearly labelled demo fallback when no model key is configured.
-- Optional OpenAI-compatible chat completions integration. Set `OPENAI_API_KEY` in `.env` and optionally `OPENAI_MODEL` to enable LLM-generated answers; the key is used by the backend only.
-- The assistant does not execute payments, edit invoices, approve financing, or perform other financial actions. Treat generated explanations as assistance, not a financial control or audit substitute.
-- Explainable rule-based anomaly findings for unusual amounts, repeated references, and unmatched transactions.
-- These are transparent heuristics, not a trained AI model or a guarantee of future cash receipts.
+---
 
-### Customer portal and SaaS foundation
-- Time-limited customer-scoped buyer portal tokens and token revocation endpoint.
-- Basic team directory and role labels, organization-scoped core records, JWT demo authentication, and password hashing.
-- Simulated SaaS plans and usage summaries; no subscription charge is made.
+## Tech Stack
 
-### Payment and financing demonstrations
-- **bKash hosted Checkout sandbox** and **SSLCOMMERZ hosted checkout sandbox**. SSLCOMMERZ payment methods depend on merchant configuration and can include supported debit/credit cards such as Visa and Mastercard.
-- Provider callbacks and server-side validation flows are represented in the backend; test with approved sandbox credentials and public HTTPS callback URLs.
-- A separate simulated checkout for offline learning.
-- Financing simulator with illustrative fees and rule-based explanation. It is not a real credit decision or loan offer.
-- CashOrbit does not collect card numbers, CVVs, expiry dates, or bKash PINs. Payment credentials should be entered only on the provider-hosted page.
+| Layer      | Technology                                      |
+|------------|-------------------------------------------------|
+| Frontend   | Next.js 15, React 19, TypeScript, Lucide icons  |
+| Backend    | FastAPI, SQLAlchemy 2, Pydantic, JWT + Argon2   |
+| Database   | PostgreSQL 16                                   |
+| Infra      | Docker Compose, Alembic migrations scaffolding  |
+| AI         | Optional OpenAI-compatible chat completions     |
 
-**Not included:** live payment processing, live bank feeds, real email delivery, actual lending, production AWS resources, certified accounting, or production compliance. See [Feature matrix](docs/FEATURE_MATRIX.md) and [Payment gateway setup](docs/PAYMENT_GATEWAYS.md).
+---
 
-## Documentation index
+## Core Features
 
-| Guide | What's inside |
-|---|---|
-| [Documentation index](docs/README.md) | How all project guides fit together |
-| [Feature matrix](docs/FEATURE_MATRIX.md) | Implemented vs simulated vs not included |
-| [Getting started](docs/GETTING_STARTED.md) | Local setup, prerequisites, first run |
-| [Product workflows](docs/PRODUCT_WORKFLOWS.md) | Invoice-to-cash, reconciliation, collections, analytics, portal, sandbox |
-| [Payment gateways](docs/PAYMENT_GATEWAYS.md) | bKash + SSLCOMMERZ setup and test checklist |
-| [Architecture](docs/ARCHITECTURE.md) | Components and data flow |
-| [Data model](docs/DATA_MODEL.md) | Main entities and relationships |
-| [API guide](docs/API_GUIDE.md) | Main endpoints and how to explore Swagger |
-| [Testing and verification](docs/TESTING.md) | Backend tests, frontend checks, payment test plan |
-| [Troubleshooting](docs/TROUBLESHOOTING.md) | Common Docker, environment, and callback issues |
-| [Learning guide](docs/LEARNING_GUIDE.md) | Step-by-step coding curriculum |
-| [AWS deployment direction](docs/AWS_DEPLOYMENT.md) | Cloud architecture guidance; no resources provisioned |
-| [Roadmap](docs/ROADMAP.md) | Remaining engineering milestones |
-| [Security policy](SECURITY.md) | Secrets, safe testing, and reporting concerns |
-| [Contributing](CONTRIBUTING.md) | Local development conventions |
-| [Changelog](CHANGELOG.md) | Package contents and notable changes |
+### Finance Operations
+- Customer & invoice management with status tracking
+- Partial / full payment recording
+- Automatic **double-entry journal entries** (AR ↔ Revenue, Cash ↔ AR)
+- Dashboard KPIs: invoiced, collected, outstanding, overdue
 
-## Project structure
+### Reconciliation & Collections
+- Bank statement CSV import (`reference,description,amount_minor,date`)
+- Suggested matches + human confirmation
+- Prioritized overdue collections queue
+- Reminder outbox (simulated)
 
-```text
-CashOrbit-Complete/
-├── README.md                 # Start here
-├── CHANGELOG.md
-├── CONTRIBUTING.md
-├── SECURITY.md
-├── .env.example              # Example only; copy to .env
-├── docker-compose.yml
-├── .github/workflows/ci.yml
-├── backend/
-│   ├── app/                  # FastAPI routes, models, schemas, accounting, security, AI assistant router
-│   ├── alembic/              # Migration configuration and versions
-│   ├── tests/                # Backend test starter and sample statement CSV
-│   ├── Dockerfile
-│   └── requirements*.txt
-├── frontend/
-│   ├── app/                  # Next.js UI and styles
-│   ├── lib/api.ts            # API client
-│   ├── public/
-│   └── Dockerfile
-└── docs/                     # Product, technical, setup, and learning guides
+### Intelligence
+- Receivables aging + 30/60/90-day cash forecast
+- Simplified DSO proxy
+- Rule-based anomaly detection with explanations
+- **AI Finance Assistant** (organization-scoped, read-only, with deterministic fallback)
+
+### Payments & Portal
+- Sandbox checkout (internal)
+- bKash + SSLCOMMERZ sandbox adapters
+- Time-limited buyer portal tokens
+- Financing simulation (illustrative only)
+
+---
+
+## Quick Start (Docker — recommended)
+
+```bash
+# 1. Clone / extract the project
+cd CashOrbit
+
+# 2. Create environment file
+cp .env.example .env
+
+# 3. Set a strong JWT secret (important)
+# Edit .env and change JWT_SECRET to a long random string
+
+# 4. Start everything
+docker compose up --build
 ```
 
-## Environment configuration
+Open http://localhost:3000 and sign in with the demo account.
 
-The full list is in `.env.example`. Important variables:
+---
 
-- `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`: local database configuration.
-- `DATABASE_URL`: SQLAlchemy connection string. In Docker Compose, the database hostname is `db`.
-- `JWT_SECRET`: token signing secret; replace the example value.
-- `CORS_ORIGINS`: allowed frontend origins.
-- `NEXT_PUBLIC_API_URL`: API base URL used by the browser.
-- `PAYMENT_PROVIDER_MODE`: keep set to `sandbox`.
-- `PAYMENT_PUBLIC_BASE_URL`: public HTTPS API URL for provider callbacks/IPN; localhost cannot be reached by provider servers.
-- `BKASH_*` and `SSLCOMMERZ_*`: backend-only sandbox credentials. Never expose them with `NEXT_PUBLIC_` prefixes.
+## Project Structure
 
-See [Payment gateway setup](docs/PAYMENT_GATEWAYS.md) before testing providers. Never commit `.env` or real credentials.
+```text
+CashOrbit/
+├── frontend/                 # Next.js 15 app (Vercel-ready)
+│   ├── app/                  # App router pages
+│   ├── components/           # Domain UI (dashboard, invoices, reconciliation…)
+│   └── lib/                  # API client + types
+├── backend/
+│   ├── app/
+│   │   ├── main.py           # FastAPI routes
+│   │   ├── models.py         # SQLAlchemy models
+│   │   ├── accounting.py     # Double-entry helpers
+│   │   ├── security.py       # JWT + password hashing
+│   │   └── routers/          # AI assistant router
+│   ├── alembic/              # Migration scaffolding
+│   └── tests/
+├── docs/                     # Architecture, workflows, deployment
+└── docker-compose.yml
+```
 
-## Quality checks
+---
 
-Backend:
+## Deployment (Portfolio)
 
+Recommended setup for showing recruiters:
+
+| Component | Platform   | Why |
+|-----------|------------|-----|
+| Frontend  | **Vercel** | Perfect for Next.js |
+| Backend   | **Railway** or **Render** | Easy Postgres + FastAPI |
+| Database  | Railway Postgres / Neon | Managed, free hobby tier |
+
+See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** for step-by-step instructions.
+
+---
+
+## Architecture Highlights (for interviews)
+
+- **Multi-tenant data model** — every business record is scoped by `organization_id`
+- **Integer minor units** for money (avoids floating-point issues)
+- **Double-entry ledger** on invoice issuance and payment receipt
+- **Idempotent payment intents** + provider event tracking
+- **Human-in-the-loop reconciliation** (never auto-posts matches)
+- **Read-only AI assistant** with clear fallback when no API key is set
+- Clean separation of frontend domain components
+
+---
+
+## Important Limitations
+
+This is an **educational portfolio project**. It intentionally does **not** include:
+
+- Live payment processing or real bank feeds
+- Production-grade concurrent payment locking
+- Real email/SMS delivery for reminders
+- Full RBAC enforcement testing
+- Certified accounting controls or regulatory compliance
+
+Treat it as a demonstration of product thinking and engineering structure, not as software ready for real money.
+
+---
+
+## Local Development (without Docker)
+
+**Backend**
 ```bash
 cd backend
 python -m venv .venv
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-# macOS/Linux: source .venv/bin/activate
-pip install -r requirements-dev.txt
-pytest -q
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
 ```
 
-Frontend (Node.js 22 recommended):
-
+**Frontend**
 ```bash
 cd frontend
 npm install
-npm run typecheck
-npm run build
+npm run dev
 ```
 
-Run both sets of checks in a network-enabled environment and resolve failures before claiming a successful build. Also review [Testing and verification](docs/TESTING.md), particularly tenant-isolation and payment callback tests.
+Set `NEXT_PUBLIC_API_URL=http://localhost:8000` in `frontend/.env.local`.
 
-## Financial correctness and limitations
-
-- Amounts are represented as integer minor units to avoid binary floating-point rounding.
-- Invoice issuance and payment receipt have basic balanced journal posting.
-- This is a small, simplified chart of accounts and single-currency learning model, not a complete accounting product.
-- The application includes demo startup/seed behavior. Production should use controlled migrations and a separate seed process.
-- Organization scoping and role foundations exist, but exhaustive object-level authorization testing is required.
-- Reminder jobs are not sent by a production worker; anomaly detection and financing are rule-based; forecasts are simple estimates.
-- Provider adapters require valid sandbox credentials and reachable callbacks to verify end to end. No real payment can be assumed to have succeeded without provider-side validation.
-- Audit records are database rows, not immutable/tamper-proof evidence.
+---
 
 ## License
 
-No license is specified. Add a license before redistributing the code. Review third-party package and asset terms independently.
+No license is specified. Add one before public redistribution.
+
+---
+
+Built as a portfolio project to demonstrate full-stack fintech engineering.
