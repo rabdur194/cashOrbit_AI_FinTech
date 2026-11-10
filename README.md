@@ -2,8 +2,8 @@
 
 **B2B Receivables & Working-Capital Platform**  
 Full-stack fintech portfolio project — invoice-to-cash, reconciliation, collections, and AI-assisted finance operations.
-Forntend: https://cash-orbitaifintech-dlbt04316-rabdur194s-projects.vercel.app/
-Backend: https://cashorbit-ai-fintech.onrender.com/health
+Forntend: [https://cash-orbitaifintech-dlbt04316-rabdur194s-projects.vercel.app/](https://cash-orbit-ai-fin-tech.vercel.app/)
+Backend: [https://cashorbit-ai-fintech.onrender.com/health](https://cashorbit-ai-fintech.onrender.com/health)
 
 ![Stack](https://img.shields.io/badge/Next.js-15-black) ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791) ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6)
 
